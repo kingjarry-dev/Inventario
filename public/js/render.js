@@ -1,13 +1,10 @@
 // Funciones que solo dibujan HTML a partir de datos.
-const money = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' });
-
-const escapeHtml = (s) =>
-  String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+import { money, escapeHtml } from './ui.js';
 
 const svg = (path) =>
   `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
 
-const ICONS = {
+export const ICONS = {
   box: svg('<path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3.3 7.5L12 12.5l8.7-5M12 22V12.5"/>'),
   layers: svg('<path d="M12 2l10 5-10 5L2 7l10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>'),
   alert: svg('<path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/>'),
@@ -31,6 +28,15 @@ export function renderStats(el, s) {
   `;
 }
 
+const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+function expiryTag(p) {
+  if (!p.expiry_date || p.stock <= 0) return '';
+  const days = Math.round((Date.parse(p.expiry_date) - Date.parse(today())) / 864e5);
+  if (days > 30) return '';
+  const label = days < 0 ? 'Vencido' : days === 0 ? 'Vence hoy' : `Vence en ${days} d`;
+  return `<span class="tag exp ${days < 0 ? 'expired' : ''}">${label}</span>`;
+}
+
 export function renderProducts(tbody, emptyEl, products) {
   emptyEl.hidden = products.length > 0;
   tbody.innerHTML = products
@@ -47,7 +53,7 @@ export function renderProducts(tbody, emptyEl, products) {
               <div class="avatar" style="background:${colorFor(p.category)}">${escapeHtml(p.name.trim().charAt(0).toUpperCase() || '?')}</div>
               <div>
                 <span class="product-name">${escapeHtml(p.name)}</span>
-                <span class="product-sku">${escapeHtml(p.sku)}</span>
+                <span class="product-sku">${escapeHtml(p.sku)}${p.barcode ? ' · ' + escapeHtml(p.barcode) : ''}${expiryTag(p)}</span>
               </div>
             </div>
           </td>
@@ -64,8 +70,8 @@ export function renderProducts(tbody, emptyEl, products) {
             </div>
           </td>
           <td class="right">
-            <button class="btn btn-sm" data-action="edit">Editar</button>
-            <button class="btn btn-sm btn-danger" data-action="delete">Eliminar</button>
+            <button class="btn btn-sm admin-only" data-action="edit">Editar</button>
+            <button class="btn btn-sm btn-danger admin-only" data-action="delete">Eliminar</button>
           </td>
         </tr>`;
     })

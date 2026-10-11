@@ -17,31 +17,44 @@
   </script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        <span class="brand-icon">
+  <div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-icon">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3.3 7.5L12 12.5l8.7-5M12 22V12.5"/></svg>
-        </span>
-        <div>
-          <h1>Inventario</h1>
-          <p>Mi Tienda</p>
-        </div>
-      </div>
-      <div class="topbar-actions">
-        <button id="btn-theme" class="icon-btn" title="Cambiar tema" aria-label="Cambiar tema">
+        </span><div><h1>Inventario</h1><p>Mi Tienda</p></div></div>
+    <nav id="nav" class="tabs" hidden><button data-view="dashboard" class=""><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1z"/></svg><span>Inicio</span></button><button data-view="inventory" class=""><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3.3 7.5L12 12.5l8.7-5M12 22V12.5"/></svg><span>Inventario</span></button><button data-view="sales" class=""><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 001 .8h8.8a1 1 0 001-.8L20 7H6"/></svg><span>Ventas</span></button><button data-view="movements" class=""><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span>Movimientos</span></button><button data-view="purchases" class="admin-only"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h13v10H3zM16 10h3l2 3v4h-5"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><span>Compras</span></button><button data-view="cash" class=""><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg><span>Caja</span></button><button data-view="reports" class="admin-only"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg><span>Reportes</span></button><button data-view="users" class="admin-only"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M17 4.5a3.5 3.5 0 010 7M22 20c0-3-2-5-5-5.7"/></svg><span>Usuarios</span></button></nav>
+    <div class="side-foot">
+      <span id="user-chip" class="user-chip" hidden></span>
+      <div class="foot-actions"><button id="btn-theme" class="icon-btn" title="Cambiar tema" aria-label="Cambiar tema">
           <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
           <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-        </button>
-        <button id="btn-new" class="btn btn-primary">
+        </button><button id="btn-logout" class="btn btn-sm" hidden>Cerrar sesión</button></div>
+    </div>
+  </aside>
+  <div class="content">
+  <header class="page-head">
+    <div><h1 id="page-title">Inicio</h1><p id="page-sub"></p></div>
+    <button id="btn-new" class="btn btn-primary admin-only" hidden>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           Nuevo producto
         </button>
-      </div>
-    </div>
   </header>
 
-  <main class="container">
+  <main class="container view" id="view-dashboard" hidden>
+    <section id="dash-stats" class="stats"></section>
+    <div class="grid-2">
+      <section class="card pad"><h2 class="h2">Ventas de los últimos 7 días</h2><div id="dash-chart" class="chart"></div></section>
+      <section class="card pad"><h2 class="h2">Reponer pronto</h2><div id="dash-low" class="list"></div></section>
+    </div>
+    <div class="grid-2">
+      <section class="card pad"><h2 class="h2">Más vendidos (30 días)</h2><div id="dash-top"></div></section>
+      <section class="card pad"><h2 class="h2">Actividad reciente</h2><div id="dash-activity" class="list"></div></section>
+    </div>
+    <section class="card pad"><h2 class="h2">Por vencer (30 días)</h2><div id="dash-expiring" class="list"></div></section>
+  </main>
+
+
+  <main class="container view" id="view-inventory" hidden>
     <section id="stats" class="stats"></section>
 
     <section class="card">
@@ -49,6 +62,12 @@
         <div class="search-box">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
           <input id="search" type="search" placeholder="Buscar por nombre, SKU o categoría…" />
+        </div>
+        <div class="export admin-only">
+          <a class="btn btn-sm" href="/api/export/products.csv" download>CSV</a>
+          <a class="btn btn-sm" href="/api/export/products.xlsx" download>Excel</a>
+          <button class="btn btn-sm" id="btn-import" title="Importar productos desde CSV o Excel">Importar</button>
+          <input type="file" id="import-file" accept=".csv,.xlsx" hidden />
         </div>
         <div class="chips" id="filters">
           <button class="chip active" data-filter="all">Todos</button>
@@ -78,6 +97,142 @@
     </section>
   </main>
 
+
+  <main class="container view" id="view-sales" hidden>
+    <div class="grid-2">
+      <section class="card pad">
+        <h2 class="h2">Nueva venta</h2>
+        <div class="search-box"><input id="sale-search" type="search" placeholder="Buscar producto para agregar…" /></div>
+        <div id="sale-results" class="results"></div>
+        <div id="cart"></div>
+        <div class="pay-grid">
+          <label>Descuento
+            <span class="inline"><input id="sale-discount" type="number" min="0" step="0.01" value="0" /><select id="sale-discount-type"><option value="amt">S/</option><option value="pct">%</option></select></span>
+          </label>
+          <label>Pago
+            <select id="sale-method"><option value="efectivo">Efectivo</option><option value="yape">Yape</option><option value="plin">Plin</option><option value="tarjeta">Tarjeta</option></select>
+          </label>
+          <label id="paid-wrap">Recibido (S/)
+            <input id="sale-paid" type="number" min="0" step="0.01" placeholder="Opcional" />
+          </label>
+        </div>
+        <p id="cart-extra" class="hint"></p>
+        <div class="cart-total"><span>Total</span><strong id="cart-total">S/ 0.00</strong></div>
+        <button id="btn-checkout" class="btn btn-primary full" disabled>Cobrar venta</button>
+      </section>
+      <section class="card pad">
+        <h2 class="h2">Últimas ventas</h2>
+        <div id="sales-list" class="list"></div>
+      </section>
+    </div>
+  </main>
+
+  <main class="container view" id="view-movements" hidden>
+    <section class="card">
+      <div class="toolbar">
+        <div class="search-box"><input id="mov-search" type="search" placeholder="Filtrar por producto o SKU…" /></div>
+        <select id="mov-type">
+          <option value="">Todos los tipos</option><option value="entrada">Entradas</option><option value="salida">Salidas</option>
+          <option value="venta">Ventas</option><option value="ajuste">Ajustes</option><option value="inicial">Stock inicial</option><option value="baja">Bajas</option><option value="compra">Compras</option><option value="devolución">Devoluciones</option>
+        </select>
+        <div class="export admin-only">
+          <a class="btn btn-sm" href="/api/export/movements.csv" download>CSV</a>
+          <a class="btn btn-sm" href="/api/export/movements.xlsx" download>Excel</a>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th class="num">Cantidad</th><th class="num">Stock</th><th>Nota</th><th>Usuario</th></tr></thead>
+          <tbody id="mov-body"></tbody>
+        </table>
+        <div id="mov-empty" class="empty" hidden><p>Aún no hay movimientos</p><small>Se registran al ajustar stock, vender o editar productos.</small></div>
+      </div>
+      <div class="card-footer">Se muestran los últimos 300 movimientos. Exporta para ver todo el historial.</div>
+    </section>
+  </main>
+
+  <main class="container view" id="view-purchases" hidden>
+    <div class="grid-2">
+      <section class="card pad">
+        <h2 class="h2">Nueva compra</h2>
+        <select id="buy-supplier"></select>
+        <div class="search-box"><input id="buy-search" type="search" placeholder="Buscar producto a reponer…" /></div>
+        <div id="buy-results" class="results"></div>
+        <div id="buy-cart"></div>
+        <div class="cart-total"><span>Total</span><strong id="buy-total">S/ 0.00</strong></div>
+        <button id="btn-buy" class="btn btn-primary full" disabled>Registrar compra</button>
+        <p class="hint">Al registrar, el stock sube y el costo del producto se actualiza con el último costo de compra.</p>
+      </section>
+      <section class="card pad">
+        <h2 class="h2">Pedido sugerido</h2>
+        <p class="hint">Según lo vendido en 30 días: productos con stock bajo o que se acabarían en menos de 7 días.</p>
+        <div id="buy-suggest"></div>
+      </section>
+    </div>
+    <div class="grid-2">
+      <section class="card pad">
+        <h2 class="h2">Proveedores</h2>
+        <form id="supplier-form" class="inline-form"><input name="name" placeholder="Nombre" required /><input name="phone" placeholder="Teléfono" /><button class="btn btn-primary">Agregar</button></form>
+        <div id="supplier-list" class="list"></div>
+      </section>
+      <section class="card pad"><h2 class="h2">Últimas compras</h2><div id="buy-history" class="list"></div></section>
+    </div>
+  </main>
+
+  <main class="container view" id="view-cash" hidden>
+    <section id="cash-stats" class="stats"></section>
+    <div class="grid-2">
+      <section class="card pad">
+        <h2 class="h2">Cierre de caja de hoy</h2>
+        <div id="cash-methods"></div>
+        <form id="cash-form" class="stack">
+          <label>Efectivo contado en caja (S/)<input name="counted_cash" type="number" step="0.01" min="0" required /></label>
+          <label>Nota (opcional)<input name="note" /></label>
+          <button class="btn btn-primary full" id="btn-cash-close">Cerrar caja</button>
+        </form>
+        <p id="cash-closed" class="hint" hidden></p>
+      </section>
+      <section class="card pad"><h2 class="h2">Cierres anteriores</h2><div id="cash-history"></div></section>
+    </div>
+  </main>
+
+  <main class="container view" id="view-reports" hidden>
+    <section class="card pad filters-bar">
+      <label>Desde <input type="date" id="rep-from" /></label>
+      <label>Hasta <input type="date" id="rep-to" /></label>
+      <button id="rep-apply" class="btn btn-primary">Ver reporte</button>
+      <div class="export">
+        <a id="rep-csv" class="btn btn-sm" href="#" download>CSV</a>
+        <a id="rep-xlsx" class="btn btn-sm" href="#" download>Excel</a>
+      </div>
+    </section>
+    <section id="rep-stats" class="stats"></section>
+    <div class="grid-2">
+      <section class="card pad"><h2 class="h2">Ventas por día</h2><div id="rep-chart" class="chart"></div></section>
+      <section class="card pad"><h2 class="h2">Más vendidos</h2><div id="rep-top"></div></section>
+    </div>
+    <div class="grid-2"><section class="card pad"><h2 class="h2">Por categoría</h2><div id="rep-cat"></div></section>
+    <section class="card pad"><h2 class="h2">Por método de pago</h2><div id="rep-method"></div></section></div>
+  </main>
+
+  <main class="container view" id="view-users" hidden>
+    <section class="card pad">
+      <h2 class="h2">Usuarios</h2>
+      <form id="user-form" class="inline-form">
+        <input name="username" placeholder="Usuario" required minlength="3" autocomplete="off" />
+        <span class="pw-wrap"><input name="password" type="password" placeholder="Contraseña (mín. 6)" required minlength="6" autocomplete="new-password" /><button type="button" class="pw-toggle" aria-label="Mostrar u ocultar contraseña" title="Mostrar / ocultar contraseña"><svg class="i-eye" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="i-eyeoff" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.9 10.9 0 0112 20C5 20 1 12 1 12a18.5 18.5 0 015.1-5.9M9.9 4.2A10.7 10.7 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.2 3.2M1 1l22 22"/></svg></button></span>
+        <select name="role"><option value="seller">Vendedor</option><option value="admin">Administrador</option></select>
+        <button class="btn btn-primary">Crear usuario</button>
+      </form>
+      <p id="user-error" class="form-error" hidden></p>
+      <div class="table-wrap"><table><thead><tr><th>Usuario</th><th>Rol</th><th class="right">Acciones</th></tr></thead><tbody id="users-body"></tbody></table></div>
+      <p class="hint">Vendedor: vende y ajusta stock. Administrador: además edita productos, ve reportes, exporta y gestiona usuarios.</p>
+    </section>
+  </main>
+
+  </div>
+</div>
+
   <dialog id="dialog">
     <form id="product-form" method="dialog">
       <h2 id="dialog-title">Nuevo producto</h2>
@@ -98,11 +253,32 @@
         <label>Precio (S/)
           <input name="price" type="number" step="0.01" min="0" required />
         </label>
+        <label>Costo (S/)
+          <input name="cost" type="number" step="0.01" min="0" value="0" />
+        </label>
         <label>Stock
           <input name="stock" type="number" min="0" step="1" value="0" required />
         </label>
         <label>Mínimo
           <input name="min_stock" type="number" min="0" step="1" value="5" required />
+        </label>
+      </div>
+
+      <input type="hidden" name="supplier_id" />
+      <div class="row">
+        <label>Precio por mayor
+          <input name="wholesale_price" type="number" step="0.01" min="0" value="0" />
+        </label>
+        <label>Desde (uds)
+          <input name="wholesale_min" type="number" step="1" min="0" value="0" />
+        </label>
+      </div>
+      <div class="row">
+        <label>Código de barras
+          <input name="barcode" placeholder="Escanéalo aquí" autocomplete="off" />
+        </label>
+        <label>Vencimiento
+          <input name="expiry_date" type="date" />
         </label>
       </div>
 
@@ -113,6 +289,43 @@
         <button type="submit" class="btn btn-primary">Guardar</button>
       </div>
     </form>
+  </dialog>
+
+  <div id="auth" class="auth" hidden>
+    <div class="auth-hero">
+      <div class="hero-inner">
+        <span class="brand-icon big">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3.3 7.5L12 12.5l8.7-5M12 22V12.5"/></svg>
+        </span>
+        <h2>Inventario Tienda</h2>
+        <p>Controla tu stock, registra ventas y mira crecer tu negocio.</p>
+        <ul>
+          <li>Stock en tiempo real y alertas de reposición</li>
+          <li>Ventas rápidas con carrito</li>
+          <li>Reportes y exportación a Excel</li>
+        </ul>
+      </div>
+    </div>
+    <div class="auth-side">
+      <form id="auth-form" class="auth-card">
+        <h2 id="auth-title">Iniciar sesión</h2>
+        <p id="auth-sub" class="hint"></p>
+        <label>Usuario <input name="username" required autocomplete="username" /></label>
+        <label>Contraseña
+          <span class="pw-wrap"><input name="password" type="password" required autocomplete="current-password" /><button type="button" class="pw-toggle" aria-label="Mostrar u ocultar contraseña" title="Mostrar / ocultar contraseña"><svg class="i-eye" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="i-eyeoff" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.9 10.9 0 0112 20C5 20 1 12 1 12a18.5 18.5 0 015.1-5.9M9.9 4.2A10.7 10.7 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.2 3.2M1 1l22 22"/></svg></button></span>
+        </label>
+        <p id="auth-error" class="form-error" hidden></p>
+        <button class="btn btn-primary full" id="auth-submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <dialog id="ticket-dialog">
+    <div id="ticket"></div>
+    <div class="actions">
+      <button type="button" id="ticket-close" class="btn">Cerrar</button>
+      <button type="button" id="ticket-print" class="btn btn-primary">Imprimir</button>
+    </div>
   </dialog>
 
   <div id="toast" class="toast" hidden></div>

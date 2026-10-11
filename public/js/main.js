@@ -1,127 +1,115 @@
+// Arranque: sesión, navegación entre vistas y tema.
 import { api } from './api.js';
-import { renderStats, renderProducts } from './render.js';
+import { $ } from './ui.js';
+import * as dashboard from './views/dashboard.js';
+import * as inventory from './views/inventory.js';
+import * as sales from './views/sales.js';
+import * as movements from './views/movements.js';
+import * as reports from './views/reports.js';
+import * as users from './views/users.js';
+import * as purchases from './views/purchases.js';
+import * as cash from './views/cash.js';
+import { initTicket } from './ticket.js';
 
-const $ = (sel) => document.querySelector(sel);
-const els = {
-  stats: $('#stats'),
-  body: $('#products-body'),
-  empty: $('#empty'),
-  search: $('#search'),
-  dialog: $('#dialog'),
-  form: $('#product-form'),
-  title: $('#dialog-title'),
-  error: $('#form-error'),
-  toast: $('#toast'),
-  count: $('#count'),
-  filters: $('#filters'),
-  theme: $('#btn-theme'),
-};
+const views = { dashboard, inventory, sales, movements, purchases, cash, reports, users };
+const auth = { box: $('#auth'), form: $('#auth-form'), error: $('#auth-error') };
+let needsSetup = false;
+let ready = false; // los eventos de las vistas se registran una sola vez
 
-let products = [];
-let filter = 'all';
-
-// ---------- Utilidades ----------
-function toast(msg) {
-  els.toast.textContent = msg;
-  els.toast.hidden = false;
-  clearTimeout(toast.t);
-  toast.t = setTimeout(() => (els.toast.hidden = true), 2500);
-}
-
-async function refresh() {
-  const [list, stats] = await Promise.all([api.list(els.search.value), api.stats()]);
-  products = list;
-  draw();
-  renderStats(els.stats, stats);
-}
-
-// Aplica el filtro (Todos / Stock bajo) y dibuja la tabla
-function draw() {
-  const visible = filter === 'low' ? products.filter((p) => p.stock <= p.min_stock) : products;
-  renderProducts(els.body, els.empty, visible);
-  els.count.textContent = visible.length ? `Mostrando ${visible.length} producto${visible.length === 1 ? '' : 's'}` : '';
-}
-
-function debounce(fn, ms = 250) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-
-// ---------- Formulario ----------
-function openForm(product = null) {
-  els.form.reset();
-  els.error.hidden = true;
-  els.title.textContent = product ? 'Editar producto' : 'Nuevo producto';
-  els.form.elements.id.value = product?.id ?? '';
-  if (product) {
-    for (const key of ['name', 'sku', 'category', 'price', 'stock', 'min_stock']) {
-      els.form.elements[key].value = product[key];
-    }
-  }
-  els.dialog.showModal();
-}
-
-els.form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(els.form));
-  const id = data.id;
-  delete data.id;
-
-  try {
-    if (id) await api.update(id, data);
-    else await api.create(data);
-    els.dialog.close();
-    toast(id ? 'Producto actualizado' : 'Producto creado');
-    await refresh();
-  } catch (err) {
-    els.error.textContent = err.message;
-    els.error.hidden = false;
-  }
-});
-
-// ---------- Eventos ----------
-$('#btn-new').addEventListener('click', () => openForm());
-$('#btn-cancel').addEventListener('click', () => els.dialog.close());
-els.search.addEventListener('input', debounce(refresh));
-
-els.filters.addEventListener('click', (e) => {
-  const chip = e.target.closest('.chip');
-  if (!chip) return;
-  filter = chip.dataset.filter;
-  els.filters.querySelectorAll('.chip').forEach((c) => c.classList.toggle('active', c === chip));
-  draw();
-});
-
-els.theme.addEventListener('click', () => {
+// ---------- Tema ----------
+$('#btn-theme').addEventListener('click', () => {
   const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
   document.documentElement.dataset.theme = next;
   try { localStorage.setItem('theme', next); } catch (_) {}
 });
 
-els.body.addEventListener('click', async (e) => {
-  const btn = e.target.closest('button[data-action]');
-  if (!btn) return;
-  const id = Number(btn.closest('tr').dataset.id);
-  const product = products.find((p) => p.id === id);
+// ---------- Mostrar / ocultar contraseña (ojito) ----------
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('.pw-toggle');
+  if (!b) return;
+  const input = b.parentElement.querySelector('input');
+  const reveal = input.type === 'password';
+  input.type = reveal ? 'text' : 'password';
+  b.classList.toggle('on', reveal);
+  input.focus();
+});
 
+// ---------- Navegación ----------
+const TITLES = {
+  dashboard: ['Inicio', 'Resumen de tu negocio'],
+  inventory: ['Inventario', 'Productos y niveles de stock'],
+  sales: ['Ventas', 'Registra una nueva venta'],
+  movements: ['Movimientos', 'Historial de entradas y salidas de stock'],
+  purchases: ['Compras', 'Proveedores, reposición y pedido sugerido'],
+  cash: ['Caja', 'Resumen del día y cierre de caja'],
+  reports: ['Reportes', 'Analiza tus ventas por periodo'],
+  users: ['Usuarios', 'Quién puede entrar al sistema'],
+};
+
+function show(name) {
+  $('#page-title').textContent = TITLES[name][0];
+  $('#page-sub').textContent = TITLES[name][1];
+  $('#btn-new').hidden = name !== 'inventory';
+  for (const key of Object.keys(views)) $(`#view-${key}`).hidden = key !== name;
+  $('#nav').querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.view === name));
+  views[name].load();
+}
+$('#nav').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-view]');
+  if (b) show(b.dataset.view);
+});
+
+// ---------- Sesión ----------
+function showAuth(setup) {
+  needsSetup = setup;
+  document.body.removeAttribute('data-role');
+  ['#nav', '#user-chip', '#btn-logout', '#btn-new'].forEach((s) => ($(s).hidden = true));
+  $('#auth-title').textContent = setup ? 'Crea tu cuenta de administrador' : 'Iniciar sesión';
+  $('#auth-sub').textContent = setup ? 'Es tu primer uso: este usuario podrá gestionar todo el sistema.' : '';
+  $('#auth-submit').textContent = setup ? 'Crear y entrar' : 'Entrar';
+  auth.form.elements.password.autocomplete = setup ? 'new-password' : 'current-password';
+  auth.form.reset();
+  auth.form.elements.password.type = 'password';
+  auth.form.querySelector('.pw-toggle').classList.remove('on');
+  auth.error.hidden = true;
+  auth.box.hidden = false;
+  auth.form.elements.username.focus();
+}
+
+function enter(user) {
+  auth.box.hidden = true;
+  document.body.dataset.role = user.role;
+  $('#nav').hidden = false;
+  $('#user-chip').hidden = false;
+  $('#user-chip').textContent = `${user.username} · ${user.role === 'admin' ? 'Admin' : 'Vendedor'}`;
+  $('#btn-logout').hidden = false;
+  if (!ready) {
+    Object.values(views).forEach((v) => v.init(user));
+    initTicket();
+    ready = true;
+  }
+  show('dashboard');
+}
+
+auth.form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const creds = Object.fromEntries(new FormData(auth.form));
   try {
-    switch (btn.dataset.action) {
-      case 'inc': await api.adjustStock(id, 1); break;
-      case 'dec': await api.adjustStock(id, -1); break;
-      case 'edit': return openForm(product);
-      case 'delete':
-        if (!confirm(`¿Eliminar "${product.name}"?`)) return;
-        await api.remove(id);
-        toast('Producto eliminado');
-        break;
-    }
-    await refresh();
+    enter(await (needsSetup ? api.setup(creds) : api.login(creds)));
   } catch (err) {
-    toast(err.message);
+    auth.error.textContent = err.message;
+    auth.error.hidden = false;
   }
 });
 
-refresh();
+$('#btn-logout').addEventListener('click', async () => {
+  await api.logout();
+  showAuth(false);
+});
+window.addEventListener('session-expired', () => showAuth(false));
+
+(async () => {
+  const st = await api.authStatus();
+  if (st.user) enter(st.user);
+  else showAuth(st.needsSetup);
+})();

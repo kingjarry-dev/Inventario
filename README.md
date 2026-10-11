@@ -21,6 +21,12 @@ Modo desarrollo (reinicia al guardar): `npm run dev`
 - Alerta de **stock bajo** (stock ≤ mínimo)
 - Resumen: productos, unidades, stock bajo y valor del inventario
 
+## Novedades v1.4.0
+- **Respaldo automático también en el programa de escritorio** (antes solo funcionaba en modo web) y botones en *Configuración* para **guardar una copia en USB/carpeta** y **restaurar una copia** (guarda antes una copia de lo actual).
+- **Configuración de la tienda**: nombre, RUC, dirección, teléfono y mensaje del ticket; opción de imprimir el ticket directo sin diálogo.
+- **Clave de recuperación**: se muestra al crear el administrador; permite restablecer la contraseña desde el login ("¿Olvidaste tu contraseña?").
+- La versión de escritorio arranca **sin productos de ejemplo** y guarda un **registro de errores** (`Configuración → Abrir registro de errores`).
+
 ## Novedades v1.3.0
 - **Costo y ganancia**, **anular ventas** (devuelve stock) y **respaldo diario** automático en `data/backups/` (últimos 7).
 - **Compras y proveedores**: registra compras (sube stock y actualiza el costo) y **pedido sugerido** según lo vendido en 30 días.

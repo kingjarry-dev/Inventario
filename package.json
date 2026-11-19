@@ -2,7 +2,7 @@
   "name": "inventario-tienda",
   "version": "1.4.0",
   "description": "Sistema de inventario para una tienda pequeña",
-  "author": "Mi Tienda",
+  "author": "Tienda Tania",
   "main": "electron/main.js",
   "scripts": {
     "start": "node server.js",
@@ -21,7 +21,7 @@
   },
   "build": {
     "appId": "com.mitienda.inventario",
-    "productName": "Inventario Tienda",
+    "productName": "Tienda Tania",
     "files": ["electron/**", "src/**", "public/**", "package.json"],
     "win": { "target": ["nsis", "portable"] },
     "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true }

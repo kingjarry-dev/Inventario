@@ -1,4 +1,4 @@
-# 📦 Inventario Tienda
+# 📦 Tienda Tania – Sistema de Inventario
 
 Sistema de inventario sencillo para una tienda pequeña.
 **Node.js + Express + SQLite (integrado en Node)**, con interfaz web en HTML/CSS/JS puro (sin pasos de compilación).

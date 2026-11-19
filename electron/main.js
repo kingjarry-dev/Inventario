@@ -27,7 +27,7 @@ function createWindow(port) {
     height: 800,
     minWidth: 760,
     minHeight: 560,
-    title: 'Inventario · Mi Tienda',
+    title: 'Inventario · Tienda Tania',
     autoHideMenuBar: true,
     backgroundColor: '#0e1120',
   });

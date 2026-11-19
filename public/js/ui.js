@@ -24,7 +24,7 @@ export function debounce(fn, ms = 250) {
   };
 }
 
-export const STORE_NAME = 'Mi Tienda';
+export const STORE_NAME = 'Tienda Tania';
 export const METHOD_LABELS = { efectivo: 'Efectivo', yape: 'Yape', plin: 'Plin', tarjeta: 'Tarjeta' };
 export const MOVEMENT_LABELS = {
   entrada: 'Entrada', salida: 'Salida', venta: 'Venta', ajuste: 'Ajuste', inicial: 'Stock inicial',
